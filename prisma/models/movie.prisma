@@ -1,0 +1,15 @@
+model Movie {
+    id             Int       @id @default(autoincrement())
+    tmdbId         Int       @unique @map("tmdb_id")
+    title          String
+    overview       String?
+    runtimeMinutes Int       @map("runtime_minutes")
+    posterPath     String?   @map("poster_path")
+    releaseDate    DateTime? @map("release_date")
+    genres         String[]
+    rating         Float?
+    createdAt      DateTime  @default(now()) @map("created_at")
+    updatedAt      DateTime  @updatedAt @map("updated_at")
+
+    @@map("movies")
+}
