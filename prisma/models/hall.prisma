@@ -32,6 +32,8 @@ model Seat {
     number Int
     type   SeatType @default(STANDARD)
 
+    screeningSeats ScreeningSeat[]
+
     @@unique([hallId, row, number])
     @@map("seats")
 }

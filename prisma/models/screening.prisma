@@ -9,6 +9,8 @@ model Screening {
     standardPrice Int      @map("standard_price")
     sofaPrice     Int      @map("sofa_price")
 
+    seats ScreeningSeat[]
+
     @@index([startsAt])
     @@index([hallId, startsAt])
     @@map("screenings")

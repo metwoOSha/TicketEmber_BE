@@ -1,0 +1,22 @@
+enum ScreeningSeatStatus {
+    FREE
+    HELD
+    SOLD
+
+    @@map("screening_seat_status")
+}
+
+model ScreeningSeat {
+    id          Int                 @id @default(autoincrement())
+    screeningId Int                 @map("screening_id")
+    screening   Screening           @relation(fields: [screeningId], references: [id], onDelete: Cascade)
+    seatId      Int                 @map("seat_id")
+    seat        Seat                @relation(fields: [seatId], references: [id])
+    status      ScreeningSeatStatus @default(FREE)
+    price       Int
+    heldUntil   DateTime?           @map("held_until")
+
+    @@unique([screeningId, seatId])
+    @@index([screeningId, status])
+    @@map("screening_seats")
+}
