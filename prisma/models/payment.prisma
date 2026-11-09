@@ -1,0 +1,30 @@
+enum PaymentStatus {
+    PENDING
+    SUCCEEDED
+    FAILED
+
+    @@map("payment_status")
+}
+
+enum PaymentProvider {
+    FAKE
+    WAYFORPAY
+
+    @@map("payment_provider")
+}
+
+model Payment {
+    id                String          @id @default(uuid()) @db.Uuid
+    orderId           String          @map("order_id") @db.Uuid
+    order             Order           @relation(fields: [orderId], references: [id])
+    provider          PaymentProvider
+    providerPaymentId String          @map("provider_payment_id")
+    status            PaymentStatus   @default(PENDING)
+    amount            Int
+    createdAt         DateTime        @default(now()) @map("created_at")
+    updatedAt         DateTime        @updatedAt @map("updated_at")
+
+    @@unique([provider, providerPaymentId])
+    @@index([orderId])
+    @@map("payments")
+}

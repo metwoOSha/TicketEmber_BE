@@ -21,6 +21,7 @@ model Order {
     updatedAt   DateTime    @updatedAt @map("updated_at")
 
     orderItems OrderItem[]
+    payment    Payment[]
 
     @@index([userId, createdAt])
     @@index([status, expiresAt])
