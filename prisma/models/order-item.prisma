@@ -1,0 +1,11 @@
+model OrderItem {
+    id              Int           @id @default(autoincrement())
+    orderId         String        @map("order_id") @db.Uuid
+    order           Order         @relation(fields: [orderId], references: [id], onDelete: Cascade)
+    screeningSeatId Int           @map("screening_seat_id")
+    screeningSeat   ScreeningSeat @relation(fields: [screeningSeatId], references: [id])
+    price           Int
+
+    @@unique([orderId, screeningSeatId])
+    @@map("order_items")
+}

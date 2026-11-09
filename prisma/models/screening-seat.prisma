@@ -16,6 +16,8 @@ model ScreeningSeat {
     price       Int
     heldUntil   DateTime?           @map("held_until")
 
+    orderItems OrderItem[]
+
     @@unique([screeningId, seatId])
     @@index([screeningId, status])
     @@map("screening_seats")
