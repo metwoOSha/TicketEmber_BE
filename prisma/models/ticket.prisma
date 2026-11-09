@@ -1,0 +1,12 @@
+model Ticket {
+    id              String        @id @default(uuid()) @db.Uuid
+    orderId         String        @map("order_id") @db.Uuid
+    order           Order         @relation(fields: [orderId], references: [id])
+    screeningSeatId Int           @unique @map("screening_seat_id")
+    screeningSeat   ScreeningSeat @relation(fields: [screeningSeatId], references: [id])
+    code            String        @unique
+    issuedAt        DateTime      @default(now()) @map("issued_at")
+
+    @@index([orderId])
+    @@map("tickets")
+}

@@ -17,6 +17,7 @@ model ScreeningSeat {
     heldUntil   DateTime?           @map("held_until")
 
     orderItems OrderItem[]
+    ticket     Ticket?
 
     @@unique([screeningId, seatId])
     @@index([screeningId, status])
