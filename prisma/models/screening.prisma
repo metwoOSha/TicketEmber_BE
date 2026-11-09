@@ -1,0 +1,15 @@
+model Screening {
+    id            Int      @id @default(autoincrement())
+    movieId       Int      @map("movie_id")
+    movie         Movie    @relation(fields: [movieId], references: [id])
+    hallId        Int      @map("hall_id")
+    hall          Hall     @relation(fields: [hallId], references: [id], onDelete: Restrict)
+    startsAt      DateTime @map("starts_at")
+    endsAt        DateTime @map("ends_at")
+    standardPrice Int      @map("standard_price")
+    sofaPrice     Int      @map("sofa_price")
+
+    @@index([startsAt])
+    @@index([hallId, startsAt])
+    @@map("screenings")
+}

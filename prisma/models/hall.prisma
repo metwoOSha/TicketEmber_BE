@@ -14,11 +14,12 @@ enum SeatType {
 }
 
 model Hall {
-    id      Int      @id @default(autoincrement())
-    name    String   @unique
-    type    HallType
-    columns Int
-    seats   Seat[]
+    id         Int         @id @default(autoincrement())
+    name       String      @unique
+    type       HallType
+    columns    Int
+    seats      Seat[]
+    screenings Screening[]
 
     @@map("halls")
 }
