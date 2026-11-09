@@ -10,6 +10,7 @@ model Screening {
     sofaPrice     Int      @map("sofa_price")
 
     seats ScreeningSeat[]
+    order Order[]
 
     @@index([startsAt])
     @@index([hallId, startsAt])
