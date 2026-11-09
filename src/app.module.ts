@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { appConfig, databaseConfig, redisConfig, validateEnv } from './config/index.js';
 import { PrismaModule } from './prisma/prisma.module.js';
-import { PingModule } from './ping/ping.module.js';
+import { HallsModule } from './modules/halls/halls.module.js';
 
 @Module({
     imports: [
@@ -12,7 +12,7 @@ import { PingModule } from './ping/ping.module.js';
             load: [appConfig, databaseConfig, redisConfig],
         }),
         PrismaModule,
-        PingModule,
+        HallsModule,
     ],
 })
 export class AppModule {}
