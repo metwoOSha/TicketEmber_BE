@@ -1,4 +1,4 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { HallsService } from './halls.service.js';
 
@@ -11,5 +11,11 @@ export class HallsController {
     @ApiOperation({ summary: 'List all halls' })
     async findAll() {
         return this.hallsService.findAll();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'One halls by id' })
+    async findOne(@Param('id') id: number) {
+        return this.hallsService.findOne(id);
     }
 }
