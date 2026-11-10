@@ -21,6 +21,7 @@ export class HallsService {
         }
 
         const { seats, ...rest } = hall;
+
         return {
             ...rest,
             rowsCount: countRows(seats),

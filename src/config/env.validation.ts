@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer';
-import { IsEnum, IsInt, IsString, Max, Min, validateSync } from 'class-validator';
+import { IsEnum, IsInt, IsNotEmpty, IsString, Max, Min, validateSync } from 'class-validator';
 
 export enum NodeEnv {
     Development = 'development',
@@ -17,10 +17,16 @@ export class EnvironmentVariables {
     PORT: number = 3000;
 
     @IsString()
+    @IsNotEmpty()
     DATABASE_URL: string;
 
     @IsString()
+    // @IsNotEmpty()
     REDIS_URL: string;
+
+    @IsString()
+    @IsNotEmpty()
+    TMDB_ACCESS_TOKEN: string;
 }
 
 export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
