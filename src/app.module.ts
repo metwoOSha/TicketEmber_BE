@@ -3,6 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { appConfig, databaseConfig, redisConfig, validateEnv } from './config/index.js';
 import { PrismaModule } from './prisma/prisma.module.js';
 import { HallsModule } from './modules/halls/halls.module.js';
+import { MoviesModule } from './modules/movies/movies.module.js';
 
 @Module({
     imports: [
@@ -13,6 +14,7 @@ import { HallsModule } from './modules/halls/halls.module.js';
         }),
         PrismaModule,
         HallsModule,
+        MoviesModule,
     ],
 })
 export class AppModule {}
