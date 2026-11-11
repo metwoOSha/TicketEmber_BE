@@ -1,4 +1,4 @@
-import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { Injectable, NotFoundException, UnprocessableEntityException } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { TmdbService } from './tmdb.service.js';
 
@@ -32,5 +32,21 @@ export class MoviesService {
                 rating: tmdbMovie.vote_average,
             },
         });
+    }
+
+    async findAll() {
+        return await this.prismaService.movie.findMany({ orderBy: { createdAt: 'desc' } });
+    }
+
+    async findOne(id: number) {
+        const movie = await this.prismaService.movie.findUnique({
+            where: { id },
+        });
+
+        if (!movie) {
+            throw new NotFoundException(`Movie ${id} not found`);
+        }
+
+        return movie;
     }
 }
