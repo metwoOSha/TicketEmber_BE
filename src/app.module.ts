@@ -4,6 +4,7 @@ import { appConfig, databaseConfig, redisConfig, validateEnv } from './config/in
 import { PrismaModule } from './prisma/prisma.module.js';
 import { HallsModule } from './modules/halls/halls.module.js';
 import { MoviesModule } from './modules/movies/movies.module.js';
+import { ScreeningsModule } from './modules/screenings/screenings.module.js';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { MoviesModule } from './modules/movies/movies.module.js';
         PrismaModule,
         HallsModule,
         MoviesModule,
+        ScreeningsModule,
     ],
 })
 export class AppModule {}
