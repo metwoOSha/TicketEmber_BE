@@ -1,5 +1,5 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
-import { SeatType } from '../../generated/prisma/client.js';
+import { ScreeningSeatStatus, SeatType } from '../../generated/prisma/client.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateScreeningDto } from './dto/create-screening.dto.js';
 
@@ -64,6 +64,48 @@ export class ScreeningsService {
             });
 
             return screening;
+        });
+    }
+
+    async findAll() {
+        return await this.prismaService.screening.findMany({
+            where: { startsAt: { gte: new Date() } },
+            orderBy: { startsAt: 'asc' },
+            include: {
+                movie: { select: { id: true, title: true, posterPath: true, runtimeMinutes: true } },
+                hall: { select: { id: true, name: true, type: true } },
+            },
+        });
+    }
+
+    async findSeats(id: number) {
+        const screening = await this.prismaService.screening.findUnique({ where: { id } });
+
+        if (!screening) {
+            throw new NotFoundException(`Screening ${id} not found`);
+        }
+
+        const screeningSeats = await this.prismaService.screeningSeat.findMany({
+            where: { screeningId: id },
+            include: { seat: true },
+            orderBy: [{ seat: { row: 'asc' } }, { seat: { number: 'asc' } }],
+        });
+
+        const now = new Date();
+
+        return screeningSeats.map((screeningSeat) => {
+            const isHoldExpired =
+                screeningSeat.status === ScreeningSeatStatus.HELD && screeningSeat.heldUntil !== null && screeningSeat.heldUntil <= now;
+
+            return {
+                id: screeningSeat.id,
+                row: screeningSeat.seat.row,
+                number: screeningSeat.seat.number,
+                type: screeningSeat.seat.type,
+                price: screeningSeat.price,
+                status: isHoldExpired ? ScreeningSeatStatus.FREE : screeningSeat.status,
+                span: screeningSeat.seat.type === SeatType.SOFA ? 3 : 1,
+            };
         });
     }
 }
