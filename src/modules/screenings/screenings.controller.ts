@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Param, ParseIntPipe, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, ParseIntPipe, Post, Query } from '@nestjs/common';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { CreateScreeningDto } from './dto/create-screening.dto.js';
 import { ScreeningsService } from './screenings.service.js';
+import { FindScreeningsQueryDto } from './dto/find-screenings-query.dto.js';
 
 @ApiTags('screenings')
 @Controller('screenings')
@@ -16,8 +17,8 @@ export class ScreeningsController {
 
     @Get()
     @ApiOperation({ summary: 'List upcoming screenings' })
-    async findAll() {
-        return this.screeningsService.findAll();
+    async findAll(@Query() query: FindScreeningsQueryDto) {
+        return this.screeningsService.findAll(query);
     }
 
     @Get(':id/seats')

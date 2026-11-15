@@ -2,6 +2,7 @@ import { ConflictException, Injectable, NotFoundException } from '@nestjs/common
 import { ScreeningSeatStatus, SeatType } from '../../generated/prisma/client.js';
 import { PrismaService } from '../../prisma/prisma.service.js';
 import { CreateScreeningDto } from './dto/create-screening.dto.js';
+import { FindScreeningsQueryDto } from './dto/find-screenings-query.dto.js';
 
 const SCREENING_BUFFER_MINUTES = 20;
 
@@ -67,9 +68,12 @@ export class ScreeningsService {
         });
     }
 
-    async findAll() {
+    async findAll(query: FindScreeningsQueryDto) {
         return await this.prismaService.screening.findMany({
-            where: { startsAt: { gte: new Date() } },
+            where: {
+                movieId: query.movieId,
+                startsAt: { gte: query.from ?? new Date(), lte: query.to },
+            },
             orderBy: { startsAt: 'asc' },
             include: {
                 movie: { select: { id: true, title: true, posterPath: true, runtimeMinutes: true } },
