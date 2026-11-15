@@ -25,4 +25,10 @@ export class ScreeningsController {
     async findSeats(@Param('id', ParseIntPipe) id: number) {
         return this.screeningsService.findSeats(id);
     }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get a screening by id' })
+    async findOne(@Param('id', ParseIntPipe) id: number) {
+        return this.screeningsService.findOne(id);
+    }
 }

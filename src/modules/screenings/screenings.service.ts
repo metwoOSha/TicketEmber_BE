@@ -108,4 +108,17 @@ export class ScreeningsService {
             };
         });
     }
+
+    async findOne(id: number) {
+        const screening = await this.prismaService.screening.findUnique({
+            where: { id },
+            include: { hall: true, movie: true },
+        });
+
+        if (!screening) {
+            throw new NotFoundException(`Screening ${id} not found`);
+        }
+
+        return screening;
+    }
 }
