@@ -7,6 +7,7 @@ import { MoviesModule } from './modules/movies/movies.module.js';
 import { ScreeningsModule } from './modules/screenings/screenings.module.js';
 import { UsersModule } from './modules/users/users.module.js';
 import { AuthModule } from './modules/auth/auth.module.js';
+import { RedisModule } from './redis/redis.module.js';
 
 @Module({
     imports: [
@@ -21,6 +22,7 @@ import { AuthModule } from './modules/auth/auth.module.js';
         ScreeningsModule,
         UsersModule,
         AuthModule,
+        RedisModule,
     ],
 })
 export class AppModule {}
