@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto.js';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
 import { CurrentUser } from '../../common/decorators/current-user.decorator.js';
 import type { AuthUser } from './auth.types.js';
+import { RefreshTokenDto } from './dto/refresh-token.dto.js';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -31,5 +32,19 @@ export class AuthController {
     @ApiOperation({ summary: 'Get the current user from the access token' })
     me(@CurrentUser() user: AuthUser) {
         return user;
+    }
+
+    @Post('refresh')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Get new token pair by refresh token' })
+    refresh(@Body() dto: RefreshTokenDto) {
+        return this.authService.refresh(dto.refreshToken);
+    }
+
+    @Post('logout')
+    @HttpCode(200)
+    @ApiOperation({ summary: 'Revoke refresh token' })
+    logout(@Body() dto: RefreshTokenDto) {
+        return this.authService.logout(dto.refreshToken);
     }
 }
