@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, HttpCode, HttpStatus, Param, ParseUUIDPipe, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service.js';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
@@ -25,5 +25,14 @@ export class OrdersController {
     @ApiOperation({ summary: 'List my orders' })
     findAllByUser(@CurrentUser() user: AuthUser) {
         return this.ordersService.findAllByUser(user.id);
+    }
+
+    @Post(':id/cancel')
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Cancel a pending order and release its seats' })
+    cancel(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string) {
+        return this.ordersService.cancel(user.id, id);
     }
 }
