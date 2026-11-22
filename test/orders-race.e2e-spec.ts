@@ -1,3 +1,4 @@
+import { ConflictException } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { databaseConfig } from '../src/config/index.js';
@@ -7,7 +8,6 @@ import { ScreeningsModule } from '../src/modules/screenings/screenings.module.js
 import { ScreeningsService } from '../src/modules/screenings/screenings.service.js';
 import { PrismaModule } from '../src/prisma/prisma.module.js';
 import { PrismaService } from '../src/prisma/prisma.service.js';
-import { ConflictException } from '@nestjs/common';
 
 describe('Orders race condition', () => {
     let moduleRef: TestingModule;
@@ -98,9 +98,48 @@ describe('Orders race condition', () => {
             expect(result.reason).toBeInstanceOf(ConflictException);
         }
 
-        expect(await prisma.order.count({ where: { screeningId } })).toBe(1);
+        expect(await prisma.order.count({ where: { orderItems: { some: { screeningSeatId: seatId } } } })).toBe(1);
 
         const seat = await prisma.screeningSeat.findUniqueOrThrow({ where: { id: seatId } });
         expect(seat.status).toBe('HELD');
+    });
+
+    it('lets a seat with an expired hold be taken again', async () => {
+        const seatId = seatIds[1]!;
+
+        await prisma.screeningSeat.update({
+            where: { id: seatId },
+            data: { status: 'HELD', heldUntil: new Date(Date.now() - 60 * 1000) },
+        });
+
+        const order = await ordersService.create(userId, { screeningId, screeningSeatIds: [seatId] });
+
+        expect(order.orderItems).toHaveLength(1);
+
+        const seat = await prisma.screeningSeat.findUniqueOrThrow({ where: { id: seatId } });
+        expect(seat.status).toBe('HELD');
+        expect(seat.heldUntil!.getTime()).toBeGreaterThan(Date.now());
+    });
+
+    it('does not let a seat with an active hold be taken', async () => {
+        const seatId = seatIds[2]!;
+
+        await prisma.screeningSeat.update({
+            where: { id: seatId },
+            data: { status: 'HELD', heldUntil: new Date(Date.now() + 10 * 60 * 1000) },
+        });
+
+        await expect(ordersService.create(userId, { screeningId, screeningSeatIds: [seatId] })).rejects.toBeInstanceOf(ConflictException);
+    });
+
+    it('does not let a sold seat be taken', async () => {
+        const seatId = seatIds[3]!;
+
+        await prisma.screeningSeat.update({
+            where: { id: seatId },
+            data: { status: 'SOLD' },
+        });
+
+        await expect(ordersService.create(userId, { screeningId, screeningSeatIds: [seatId] })).rejects.toBeInstanceOf(ConflictException);
     });
 });
