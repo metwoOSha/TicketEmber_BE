@@ -1,4 +1,4 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { OrdersService } from './orders.service.js';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard.js';
@@ -17,5 +17,13 @@ export class OrdersController {
     @ApiOperation({ summary: 'Create an order and hold seats for 15 minutes' })
     create(@CurrentUser() user: AuthUser, @Body() dto: CreateOrderDto) {
         return this.ordersService.create(user.id, dto);
+    }
+
+    @Get()
+    @UseGuards(JwtAuthGuard)
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'List my orders' })
+    findAllByUser(@CurrentUser() user: AuthUser) {
+        return this.ordersService.findAllByUser(user.id);
     }
 }

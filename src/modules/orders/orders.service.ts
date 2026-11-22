@@ -60,4 +60,12 @@ export class OrdersService {
             });
         });
     }
+
+    findAllByUser(userId: string) {
+        return this.prismaService.order.findMany({
+            where: { userId },
+            orderBy: { createdAt: 'desc' },
+            include: { orderItems: true },
+        });
+    }
 }
